@@ -1,0 +1,16 @@
+{
+    "id": "f3fa7df4-b820-4ece-add6-b3494f63b6ed",
+    "version": "0.0.1",
+    "requiredApiVersion": "^1.19.0",
+    "iconFile": "icon.png",
+    "author": {
+        "name": "Debdut Chakraborty",
+        "homepage": "n/a",
+        "support": "n/a"
+    },
+    "name": "remindo",
+    "nameSlug": "remindo",
+    "classFile": "RemindoApp.ts",
+    "description": "Remind team members of essential tasks",
+    "implements": []
+}
