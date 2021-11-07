@@ -12,5 +12,7 @@
     "nameSlug": "remindo",
     "classFile": "RemindoApp.ts",
     "description": "Remind team members of essential tasks",
-    "implements": []
+    "implements": [
+        "IUIKitInteractionHandler"
+    ]
 }

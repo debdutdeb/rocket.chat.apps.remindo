@@ -11,6 +11,7 @@ import { parseParams } from "../lib/helpers";
 import { CLArgs } from "../models/Args";
 import { RemindoApp } from "../RemindoApp";
 import { processHelpCommand } from "./Help";
+import { processMainModal } from "./SetReminder";
 
 export class RemindoCommand implements ISlashCommand {
     public command = "remindo";
@@ -34,7 +35,9 @@ export class RemindoCommand implements ISlashCommand {
             // anything not being able to successfully parse args to CLArgs
             // results in undefined return, including the subcommand help
             // so no need to check for that explicitely.
+            processMainModal(context, read, modify);
             processHelpCommand(context, read, modify);
+            return;
         }
     }
 }

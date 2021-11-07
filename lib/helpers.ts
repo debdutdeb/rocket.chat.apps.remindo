@@ -1,3 +1,10 @@
+import {
+    IModify,
+    IModifyCreator,
+    IRead,
+} from "@rocket.chat/apps-engine/definition/accessors";
+import { IRoom, RoomType } from "@rocket.chat/apps-engine/definition/rooms";
+import { IUser } from "@rocket.chat/apps-engine/definition/users";
 import { CLArgs } from "../models/Args";
 
 function splitByQuotes(input: string): Array<string> {
@@ -17,12 +24,10 @@ function splitByQuotes(input: string): Array<string> {
     for (let element of inputArray) {
         let matches: RegExpMatchArray | null = element.match(separator);
         if (element === "'" && !doubleQuoteOpen) {
-
             singleQuoteOpen = !singleQuoteOpen;
 
             continue;
         } else if (element === '"' && !singleQuoteOpen) {
-
             doubleQuoteOpen = !doubleQuoteOpen;
 
             continue;
@@ -71,4 +76,37 @@ export function parseParams(args: Array<string>): CLArgs | undefined {
         argsObject[args[z]] = args[z + 1];
     }
     return argsObject;
+}
+
+export async function sendMessage({
+    read,
+    modify,
+    sender,
+    participants,
+    message,
+}: {
+    read: IRead;
+    modify: IModify;
+    sender: IUser;
+    participants: Array<IUser>;
+    message: string;
+}): Promise<void> {
+    const creator: IModifyCreator = modify.getCreator();
+    const usernames: Array<string> = participants.map((user) => user.username);
+    let room: IRoom = await read
+        .getRoomReader()
+        .getDirectByUsernames(usernames);
+    if (!room) {
+        let roomId = await creator.finish(
+            creator
+                .startRoom()
+                .setType(RoomType.DIRECT_MESSAGE)
+                .setCreator(sender)
+                .setMembersToBeAddedByUsernames(usernames)
+        );
+        room = (await read.getRoomReader().getById(roomId)) as IRoom;
+    }
+    await creator.finish(
+        creator.startMessage().setSender(sender).setRoom(room).setText(message)
+    );
 }
